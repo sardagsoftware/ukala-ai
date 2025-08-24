@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+html, body { height: 100%; }
+body { @apply text-white; }
+
+/* Neon animated gradient background */
+.bg-neon {
+  background: radial-gradient(1200px 600px at 10% 10%, rgba(168,85,247,0.25), transparent 60%),
+              radial-gradient(1000px 500px at 90% 20%, rgba(14,165,233,0.2), transparent 60%),
+              radial-gradient(1000px 600px at 50% 90%, rgba(16,185,129,0.12), transparent 60%),
+              #000;
+}
