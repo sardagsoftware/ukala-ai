@@ -1,23 +1,23 @@
-<svg width="420" height="80" viewBox="0 0 420 80" xmlns="http://www.w3.org/2000/svg">
+<svg width="520" height="100" viewBox="0 0 520 100" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#7C3AED"/>
-      <stop offset="50%" stop-color="#06B6D4"/>
-      <stop offset="100%" stop-color="#10B981"/>
+      <stop offset="0%" stop-color="#FF00FF"/>
+      <stop offset="50%" stop-color="#00FFFF"/>
+      <stop offset="100%" stop-color="#39FF14"/>
       <animate attributeName="x2" values="0;1;0" dur="6s" repeatCount="indefinite"/>
     </linearGradient>
     <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feGaussianBlur stdDeviation="6" result="b"/>
       <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
   </defs>
-  <rect x="0" y="0" width="420" height="80" fill="none"/>
+  <rect x="0" y="0" width="520" height="100" fill="none"/>
   <g filter="url(#glow)">
-    <text x="10" y="58" font-family="Inter, ui-sans-serif" font-size="56" font-weight="800" fill="url(#g)">
+    <text x="15" y="70" font-family="Inter, ui-sans-serif" font-size="72" font-weight="900" fill="url(#g)">
       ukalai
     </text>
-    <rect x="10" y="64" width="180" height="4" rx="2" fill="url(#g)">
-      <animate attributeName="width" values="40;180;40" dur="2.6s" repeatCount="indefinite"/>
+    <rect x="15" y="78" width="240" height="6" rx="3" fill="url(#g)">
+      <animate attributeName="width" values="60;240;60" dur="2.8s" repeatCount="indefinite"/>
     </rect>
   </g>
 </svg>
