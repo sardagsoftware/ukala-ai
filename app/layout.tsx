@@ -13,10 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-neon min-h-screen">
         <nav className="w-full border-b border-zinc-800/60 backdrop-blur-sm bg-black/30">
           <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-4">
-            <a href="/" className="flex items-center gap-2">
-              <Logo className="h-10" />
-              <span className="font-semibold">ukala.ai</span>
-            </a>
+            <a href="/" className="flex items-center gap-2"><Logo className="h-12" /></a>
             <a href="/(dashboard)" className="text-sm opacity-80 hover:opacity-100 transition">Dashboard</a>
           </div>
         </nav>
