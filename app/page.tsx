@@ -35,14 +35,8 @@ export default function Home() {
   return (
     <main className="min-h-screen p-6 relative">
       <ThematicScene prompt={prompt} energy={energy}/>
-      <div className="max-w-5xl mx-auto space-y-6 relative z-10 z-10">
-        <motion.h1 className="text-4xl font-bold tracking-tight drop-shadow"
-          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration:.5 }}>
-          ukala.ai — AI Director (Thematic)
-        </motion.h1>
-        <p className="text-sm opacity-90">Prompt → sahne paleti → storyboard → beat şok dalgası. 5 dk hedef süre.</p>
-
-        <div className="rounded-xl bg-black/40 border border-white/10 p-4 grid gap-3 backdrop-blur">
+      <div className="max-w-5xl mx-auto space-y-8 relative z-10 z-10">
+        <div className="rounded-2xl bg-white/5 border border-white/10 p-6 grid gap-4 backdrop-blur-xl shadow-2xl">
           <input className="bg-black/50 rounded-xl p-3 border border-white/10" placeholder="Proje başlığı" value={title} onChange={e=>setTitle(e.target.value)} />
           <textarea className="bg-black/50 rounded-xl p-3 h-40 border border-white/10" placeholder="Sahne açıklaması / prompt" value={prompt} onChange={e=>setPrompt(e.target.value)} />
           <div className="flex items-center gap-3">
