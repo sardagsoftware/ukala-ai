@@ -1,18 +1,11 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import AICharacter from "./components/AICharacter";
 import BeatTimeline, { useBeatEnergy } from "./components/BeatTimeline";
 
-const HeroScene = dynamic(() => import("./(scene)/HeroScene"), { ssr: false });
-
-const PRESETS: Record<string, string[]> = {
-  Cyberpunk: ["#00E5FF", "#FF00C8", "#7DF9FF"],
-  Noir: ["#8D99AE", "#EDF2F4", "#2B2D42"],
-  Nature: ["#34D399", "#10B981", "#A7F3D0"],
-  Anime: ["#60A5FA", "#F472B6", "#FBBF24"],
-};
+const ThematicScene = dynamic(() => import("./(scene)/ThematicScene"), { ssr: false });
 
 export default function Home() {
   const [title, setTitle] = useState("");
@@ -21,7 +14,6 @@ export default function Home() {
   const [result, setResult] = useState<any>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [palette, setPalette] = useState<string[]>(PRESETS.Cyberpunk);
   const { energy, trigger } = useBeatEnergy();
 
   async function submit() {
@@ -42,36 +34,26 @@ export default function Home() {
 
   return (
     <main className="min-h-screen p-6 relative">
-      <HeroScene palette={palette} energy={energy}/>
+      <ThematicScene prompt={prompt} energy={energy}/>
       <div className="max-w-5xl mx-auto space-y-6 relative">
         <motion.h1 className="text-4xl font-bold tracking-tight drop-shadow"
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration:.5 }}>
-          ukala.ai — AI Director
+          ukala.ai — AI Director (Thematic)
         </motion.h1>
-        <p className="text-sm opacity-90">Prompt → storyboard → video. 5 dk hedef süre, reaktif sahne, preset paletleri.</p>
+        <p className="text-sm opacity-90">Prompt → sahne paleti → storyboard → beat şok dalgası. 5 dk hedef süre.</p>
 
         <div className="rounded-xl bg-black/40 border border-white/10 p-4 grid gap-3 backdrop-blur">
           <input className="bg-black/50 rounded-xl p-3 border border-white/10" placeholder="Proje başlığı" value={title} onChange={e=>setTitle(e.target.value)} />
           <textarea className="bg-black/50 rounded-xl p-3 h-40 border border-white/10" placeholder="Sahne açıklaması / prompt" value={prompt} onChange={e=>setPrompt(e.target.value)} />
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-3">
             <input type="number" className="bg-black/50 rounded-xl p-3 w-40 border border-white/10" placeholder="Süre (sn)" value={duration} onChange={e=>setDuration(Number(e.target.value))} min={10} max={1200} />
-            <div className="flex flex-wrap gap-2 text-xs">
-              {Object.keys(PRESETS).map(name=>(
-                <button key={name} onClick={()=>setPalette(PRESETS[name])}
-                  className="px-3 py-2 rounded-lg bg-white/10 border border-white/20 hover:bg-white/20 transition">
-                  {name}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <AICharacter />
             <motion.button onClick={submit} disabled={busy}
               className="rounded-2xl px-5 py-3 bg-white text-black font-semibold disabled:opacity-50"
               whileTap={{ scale: 0.98 }}>
               {busy ? "Üretiliyor..." : "Storyboard üret"}
             </motion.button>
           </div>
+
           {error && <div className="text-red-300 text-sm">{error}</div>}
           {hasFallback && (
             <div className="text-xs bg-yellow-500/10 border border-yellow-500/30 text-yellow-200 px-3 py-2 rounded-lg">
