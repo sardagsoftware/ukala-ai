@@ -1,6 +1,9 @@
 import "./globals.css";
 import type { Metadata } from "next";
 
+export
+import Logo from "./components/Logo";
+
 export const metadata: Metadata = {
   title: "ukala.ai — AI Director MVP",
   description: "Prompt → storyboard → video",
