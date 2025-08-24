@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import BeatTimeline, { useBeatEnergy } from "./components/BeatTimeline";
 import CinematicBG from "./components/CinematicBG";
 import BackdropFX from "./components/BackdropFX";
+import BubbleFX from "./components/BubbleFX";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ProField from "./components/ProField";
 import ProTextarea from "./components/ProTextarea";
@@ -37,6 +38,7 @@ export default function Home(){
     <main className="min-h-screen relative">
       <ErrorBoundary>
         {sceneMode==="R3F" ? <CharacterViewer/> : <CinematicBG/>}
+        <BubbleFX />
         <BackdropFX/>
 
         <div className="fixed top-4 right-4 z-50 glass flex items-center gap-2 px-3 py-2">
