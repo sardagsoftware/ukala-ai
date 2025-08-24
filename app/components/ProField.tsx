@@ -1,29 +1,20 @@
 "use client";
 export default function ProField({
-  label, placeholder="", value, onChange, help, type="text", className=""
+  label, placeholder="", value, onChange, help, type="text"
 }:{
   label: string; placeholder?: string; value: string|number;
-  onChange: (v:string)=>void; help?: string; type?: "text"|"number"; className?: string;
+  onChange: (v:string)=>void; help?: string; type?: "text"|"number";
 }) {
   return (
-    <div className={`pro-field ${className}`}>
+    <div className="pro-field">
       <label className="pro-label">{label}</label>
-      {type==="number" ? (
-        <input
-          inputMode="numeric"
-          className="pro-input"
-          placeholder={placeholder}
-          value={value}
-          onChange={(e)=>onChange(e.target.value)}
-        />
-      ) : (
-        <input
-          className="pro-input"
-          placeholder={placeholder}
-          value={value as string}
-          onChange={(e)=>onChange(e.target.value)}
-        />
-      )}
+      <input
+        className="pro-input"
+        placeholder={placeholder}
+        value={String(value ?? "")}
+        onChange={(e)=>onChange(e.target.value)}
+        inputMode={type==="number" ? "numeric" : undefined}
+      />
       {help && <div className="pro-help">{help}</div>}
     </div>
   );
