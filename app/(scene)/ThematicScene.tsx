@@ -1,6 +1,6 @@
 "use client";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Suspense, useMemo, useRef, useEffect } from "react";
+import { Suspense, useMemo, useRef } from "react";
 import * as THREE from "three";
 
 function pickPalette(text: string): string[] {
@@ -9,7 +9,7 @@ function pickPalette(text: string): string[] {
   if (t.includes("deniz") || t.includes("ocean")) return ["#00E5FF","#0077FF","#00FFAA"];
   if (t.includes("orman") || t.includes("forest")) return ["#34D399","#10B981","#065F46"];
   if (t.includes("cyberpunk")) return ["#FF00C8","#00E5FF","#7DF9FF"];
-  return ["#8B5CF6","#06B6D4","#10B981"]; // varsayılan
+  return ["#8B5CF6","#06B6D4","#10B981"];
 }
 
 function Particles({ palette, energy }: { palette: string[]; energy: number }) {
@@ -23,15 +23,25 @@ function Particles({ palette, energy }: { palette: string[]; energy: number }) {
     }
     return p;
   }, []);
+
   const pointsRef = useRef<THREE.Points>(null!);
   const colorRef = useRef(new THREE.Color(palette[0]));
   useFrame((_, dt) => {
     pointsRef.current.rotation.y += 0.15 * dt * (1 + energy * 1.8);
-    // enerji ile renk hafif sıcaklaşsın
-    colorRef.current.lerp(new THREE.Color(energy ? palette[1] : palette[0]), 0.08);
-    (pointsRef.current.material as THREE.PointsMaterial).color = colorRef.current;
+    colorRef.current.lerp(new THREE.Color(energy ? palette[1] : palette[0]), 0.12);
+    const m = pointsRef.current.material as THREE.PointsMaterial;
+    m.color = colorRef.current;
   });
-  const mat = new THREE.PointsMaterial({ size: 0.035, transparent: true, opacity: 0.9 });
+
+  const mat = new THREE.PointsMaterial({
+    size: 0.06,                // daha görünür
+    sizeAttenuation: true,
+    transparent: true,
+    opacity: 0.85,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending, // glow etkisi
+  });
+
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
@@ -43,7 +53,6 @@ function Particles({ palette, energy }: { palette: string[]; energy: number }) {
 }
 
 function Shockwave({ color = "#FFFFFF", energy }: { color?: string; energy: number }) {
-  // Basit halka: enerji tetiklenince büyüyüp sönüyor (additive)
   const meshRef = useRef<THREE.Mesh>(null!);
   const alphaRef = useRef(0);
   const scaleRef = useRef(0.1);
@@ -85,8 +94,12 @@ function Shockwave({ color = "#FFFFFF", energy }: { color?: string; energy: numb
 export default function ThematicScene({ prompt = "", energy = 0 }: { prompt: string; energy: number }) {
   const palette = pickPalette(prompt);
   return (
-    <div className="absolute inset-0 -z-10">
-      <Canvas camera={{ position: [0, 1.2, 6], fov: 60 }}>
+    <div className="absolute inset-0 z-0 pointer-events-none"> {/** arkaya sabitlenir, inputları engellemez */}
+      <Canvas
+        gl={{ alpha: true, antialias: true }}
+        onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); }} // şeffaf arka plan
+        camera={{ position: [0, 1.2, 6], fov: 60 }}
+      >
         <Suspense fallback={null}>
           <ambientLight intensity={0.28} />
           <pointLight position={[2, 3, 1]} intensity={1.2} color={palette[2]} />
