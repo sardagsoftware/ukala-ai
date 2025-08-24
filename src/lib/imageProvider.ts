@@ -10,7 +10,7 @@ export async function generateStoryboardFrames({
   const body = {
     model: "gpt-image-1",
     prompt: `Cinematic storyboard frames, high detail, film lighting. Scene: ${prompt}. Return ${n} distinct key moments.`,
-    size: "1024x576",
+    size: "auto",
     n,
   };
 
