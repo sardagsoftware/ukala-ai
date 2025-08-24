@@ -2,7 +2,6 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Suspense, useMemo, useRef, useEffect, useState } from "react";
 import * as THREE from "three";
-import { EffectComposer, Bloom, DepthOfField, Vignette } from "@react-three/postprocessing";
 
 function pickPalette(text: string): string[] {
   const t = text.toLowerCase();
@@ -37,13 +36,12 @@ function Particles({ palette, energy, count }: { palette: string[]; energy: numb
     return p;
   }, [count]);
 
-  const pointsRef = useRef<THREE.Points>(null!);
+  const ref = useRef<THREE.Points>(null!);
   const colorRef = useRef(new THREE.Color(palette[0]));
   useFrame((_, dt) => {
-    pointsRef.current.rotation.y += 0.1 * dt * (1 + energy * 2);
+    ref.current.rotation.y += 0.1 * dt * (1 + energy * 2);
     colorRef.current.lerp(new THREE.Color(energy ? palette[1] : palette[0]), 0.12);
-    const m = pointsRef.current.material as THREE.PointsMaterial;
-    m.color = colorRef.current;
+    (ref.current.material as THREE.PointsMaterial).color = colorRef.current;
   });
 
   const mat = new THREE.PointsMaterial({
@@ -56,7 +54,7 @@ function Particles({ palette, energy, count }: { palette: string[]; energy: numb
   });
 
   return (
-    <points ref={pointsRef}>
+    <points ref={ref}>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
@@ -110,6 +108,7 @@ export default function ThematicScene({ prompt = "", energy = 0 }: { prompt: str
   const group = useRef<THREE.Group>(null!);
   const mouse = useRef({ x: 0, y: 0 });
 
+  // Mouse paralaks
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
       mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -118,7 +117,6 @@ export default function ThematicScene({ prompt = "", energy = 0 }: { prompt: str
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
   }, []);
-
   useFrame((_, dt) => {
     if (!group.current) return;
     const targetX = THREE.MathUtils.degToRad(mouse.current.y * 4);
@@ -141,13 +139,6 @@ export default function ThematicScene({ prompt = "", energy = 0 }: { prompt: str
             <Particles palette={palette} energy={energy} count={count}/>
             <Shockwave color={palette[1]} energy={energy} />
           </group>
-
-          {/* Sinematik post-processing */}
-          <EffectComposer>
-            <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.2} intensity={0.8} />
-            <DepthOfField focusDistance={0.015} focalLength={0.025} bokehScale={1.8} />
-            <Vignette eskil={false} offset={0.2} darkness={0.6} />
-          </EffectComposer>
         </Suspense>
       </Canvas>
     </div>
