@@ -35,7 +35,7 @@ export default function Home() {
   return (
     <main className="min-h-screen p-6 relative">
       <ThematicScene prompt={prompt} energy={energy}/>
-      <div className="max-w-5xl mx-auto space-y-6 relative">
+      <div className="max-w-5xl mx-auto space-y-6 relative z-10">
         <motion.h1 className="text-4xl font-bold tracking-tight drop-shadow"
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration:.5 }}>
           ukala.ai — AI Director (Thematic)

@@ -1,7 +1,8 @@
 "use client";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Suspense, useMemo, useRef } from "react";
+import { Suspense, useMemo, useRef, useEffect, useState } from "react";
 import * as THREE from "three";
+import { EffectComposer, Bloom, DepthOfField, Vignette } from "@react-three/postprocessing";
 
 function pickPalette(text: string): string[] {
   const t = text.toLowerCase();
@@ -12,8 +13,20 @@ function pickPalette(text: string): string[] {
   return ["#8B5CF6","#06B6D4","#10B981"];
 }
 
-function Particles({ palette, energy }: { palette: string[]; energy: number }) {
-  const count = 50000;
+function useParticleCount() {
+  const [count, setCount] = useState(20000);
+  useEffect(() => {
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const cores = (navigator as any).hardwareConcurrency || 4;
+    const base = isMobile ? 12000 : 20000;
+    const scaled = Math.round(base * (1.5 / dpr) * Math.min(1.2, cores / 8));
+    setCount(Math.max(8000, Math.min(40000, scaled)));
+  }, []);
+  return count;
+}
+
+function Particles({ palette, energy, count }: { palette: string[]; energy: number; count: number }) {
   const positions = useMemo(() => {
     const p = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
@@ -22,24 +35,24 @@ function Particles({ palette, energy }: { palette: string[]; energy: number }) {
       p[i*3+2] = (Math.random() - 0.5) * 20;
     }
     return p;
-  }, []);
+  }, [count]);
 
   const pointsRef = useRef<THREE.Points>(null!);
   const colorRef = useRef(new THREE.Color(palette[0]));
   useFrame((_, dt) => {
-    pointsRef.current.rotation.y += 0.15 * dt * (1 + energy * 1.8);
+    pointsRef.current.rotation.y += 0.1 * dt * (1 + energy * 2);
     colorRef.current.lerp(new THREE.Color(energy ? palette[1] : palette[0]), 0.12);
     const m = pointsRef.current.material as THREE.PointsMaterial;
     m.color = colorRef.current;
   });
 
   const mat = new THREE.PointsMaterial({
-    size: 0.06,                // daha görünür
+    size: 0.06,
     sizeAttenuation: true,
     transparent: true,
-    opacity: 0.85,
+    opacity: 0.8,
+    blending: THREE.AdditiveBlending,
     depthWrite: false,
-    blending: THREE.AdditiveBlending, // glow etkisi
   });
 
   return (
@@ -93,18 +106,48 @@ function Shockwave({ color = "#FFFFFF", energy }: { color?: string; energy: numb
 
 export default function ThematicScene({ prompt = "", energy = 0 }: { prompt: string; energy: number }) {
   const palette = pickPalette(prompt);
+  const count = useParticleCount();
+  const group = useRef<THREE.Group>(null!);
+  const mouse = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.current.y = (e.clientY / window.innerHeight) * 2 - 1;
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => window.removeEventListener("mousemove", onMove);
+  }, []);
+
+  useFrame((_, dt) => {
+    if (!group.current) return;
+    const targetX = THREE.MathUtils.degToRad(mouse.current.y * 4);
+    const targetY = THREE.MathUtils.degToRad(mouse.current.x * 6);
+    group.current.rotation.x = THREE.MathUtils.damp(group.current.rotation.x, targetX, 4, dt);
+    group.current.rotation.y = THREE.MathUtils.damp(group.current.rotation.y, targetY, 4, dt);
+  });
+
   return (
-    <div className="absolute inset-0 z-0 pointer-events-none"> {/** arkaya sabitlenir, inputları engellemez */}
+    <div className="absolute inset-0 z-0 pointer-events-none">
       <Canvas
         gl={{ alpha: true, antialias: true }}
-        onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); }} // şeffaf arka plan
+        onCreated={({ gl }) => gl.setClearColor(0x000000, 0)}
         camera={{ position: [0, 1.2, 6], fov: 60 }}
       >
         <Suspense fallback={null}>
-          <ambientLight intensity={0.28} />
-          <pointLight position={[2, 3, 1]} intensity={1.2} color={palette[2]} />
-          <Particles palette={palette} energy={energy} />
-          <Shockwave color={palette[1]} energy={energy} />
+          <group ref={group}>
+            <ambientLight intensity={0.28} />
+            <pointLight position={[2, 3, 1]} intensity={1.2} color={palette[2]} />
+            <Particles palette={palette} energy={energy} count={count}/>
+            <Shockwave color={palette[1]} energy={energy} />
+          </group>
+
+          {/* Sinematik post-processing */}
+          <EffectComposer>
+            <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.2} intensity={0.8} />
+            <DepthOfField focusDistance={0.015} focalLength={0.025} bokehScale={1.8} />
+            <Vignette eskil={false} offset={0.2} darkness={0.6} />
+          </EffectComposer>
         </Suspense>
       </Canvas>
     </div>
