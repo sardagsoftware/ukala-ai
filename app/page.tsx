@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import BeatTimeline, { useBeatEnergy } from "./components/BeatTimeline";
+import ErrorBoundary from "./components/ErrorBoundary";
 import CinematicBG from "./components/CinematicBG";
 import BackdropFX from "./components/BackdropFX";
 const CharacterViewer = dynamic(()=>import("./(scene)/CharacterViewer"), { ssr:false });
@@ -39,7 +40,7 @@ export default function Home() {
   const hasFallback = !!result?.storyboard?.some((f:any)=> String(f.caption).includes("(fallback)") || String(f.caption).includes("(placeholder)"));
 
   return (
-    <main className="min-h-screen relative">
+    <main className="min-h-screen relative"><ErrorBoundary>
       {sceneMode === "R3F" ? <CharacterViewer/> : <CinematicBG/>}
       <BackdropFX/>
 
