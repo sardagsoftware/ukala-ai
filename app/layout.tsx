@@ -24,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <a href="/dashboard" className="text-xs md:text-sm opacity-80 hover:opacity-100 transition">Dashboard</a>
           </div>
         </nav>
+<div data-build className="fixed bottom-3 right-3 text-[10px] opacity-60">build:1756044900651</div>
         {children}
       </body>
     </html>
