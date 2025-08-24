@@ -1,0 +1,44 @@
+<svg width="720" height="160" viewBox="0 0 720 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Neon mor→camgöbeği→zümrüt paleti -->
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#7C3AED"/>
+      <stop offset="50%"  stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#10B981"/>
+      <animate attributeName="x2" values="0%;100%;0%" dur="8s" repeatCount="indefinite" />
+    </linearGradient>
+    <!-- Dış glow -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/><feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Logomark (sol disk) -->
+  <g filter="url(#glow)">
+    <circle cx="80" cy="80" r="46" fill="url(#g)"/>
+    <!-- UA monogram -->
+    <path d="M63 97V63h10v22c0 6 3 9 7 9s7-3 7-9V63h10v34c0 12-8 18-17 18s-17-6-17-18Z"
+          fill="#0B0B0B"/>
+    <path d="M112 63h12l18 52h-11l-4-12h-19l-4 12h-11l18-52Zm11 30-6-18-6 18h12Z"
+          fill="#0B0B0B"/>
+  </g>
+
+  <!-- Wordmark -->
+  <g filter="url(#glow)">
+    <text x="150" y="106"
+          font-family="Inter, ui-sans-serif"
+          font-size="72"
+          font-weight="900"
+          fill="url(#g)"
+          letter-spacing="1.5">
+      UkAlai
+    </text>
+    <!-- Alt vurgu çizgisi -->
+    <rect x="150" y="116" width="320" height="6" rx="3" fill="url(#g)">
+      <animate attributeName="width" values="80;320;80" dur="3s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+</svg>
